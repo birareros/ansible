@@ -1,0 +1,52 @@
+- name: firstansible
+  gather_facts: false
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+
+    - name: Upgrade all apt packages
+      apt: upgrade=dist force_apt_get=yes
+
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+
+    - name: Install docker-ce
+      apt: update_cache=yes name=docker-ce state=latest
+
+    - name: Install docker-ce
+      apt: update_cache=yes name=docker-ce state=latest
+
+    - name: Install docker-ce-cli
+      apt: update_cache=yes name=docker-ce-cli state=latest
+
+    - name: Install containerd.io
+      apt: update_cache=yes name=containerd.io state=latest
+
+    - name: Ensure Docker is started and enabled at boot.
+      service:
+        name: docker
+        state: started
+        enabled: true
+   # - name: Install compose and Docker SDK
+    #  pip:
+     #   name:
+      #    - docker
+       #   - docker-compose
+
+
+    - name: download compose file file from git
+      get_url:
+        url: https://raw.githubusercontent.com/birareros/devopsbase2/main/docker-compose.yml
+        dest: /tmp/docker-compose.yml
+
+    - name: compose up
+      community.docker.docker_compose:
+        project_src: /tmp/
+
+    - name: check if compose started
+      uri:
+        url: http://localhost/
